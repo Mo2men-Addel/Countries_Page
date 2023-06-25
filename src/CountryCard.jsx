@@ -9,8 +9,8 @@ const CountryCard = ({ Country }) => {
             </div>
         <div className="content">
           <p className='name'>{Country.name}</p>
-          <p className='region'>Region: {Country.region}</p>
-          <p className='size'>Area: {Country.area}</p>
+          <p className='region'>Region: {Country.region} </p>
+          <p className='size'>Area: {Country.area} km2</p>
         </div>
       </div>
     );

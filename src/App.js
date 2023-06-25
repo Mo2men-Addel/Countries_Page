@@ -1,7 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
 import {useState,useEffect } from 'react';
 import CountryCard from './CountryCard';
+import{FaSortAlphaDown} from "react-icons/fa";
+import{FaSortAlphaDownAlt} from "react-icons/fa";
+import{BiSearch} from  'react-icons/bi'
 
 const Api_url = 'https://restcountries.com/v2/all?fields=name,region,area,flag';
 
@@ -15,6 +17,9 @@ const Api_url = 'https://restcountries.com/v2/all?fields=name,region,area,flag';
 function App() {
 
     const [Countries,setCountries] = useState([]);
+    const [Asc , setAsc] = useState(true);
+    const [Icon, setIcon] = useState(FaSortAlphaDown);
+    const [SearchTerm, setSearchTerm] = useState('');
 
     const fetchCountries = async ()  => {
       const response = await fetch(Api_url);
@@ -22,29 +27,75 @@ function App() {
             setCountries(data);
           }
 
+    const SearchCountries = async(name) => {
+      const response = await fetch(Api_url);
+            const data = await response.json();
+      const newCountries =[];
+      newCountries[0] = data.find(o => o.name === name);      
+      // const newCountries = [];
+      // newCountries[0] = Countries.find(o => o.name === title); `${Api_url}&s=${title}`
+            setCountries(newCountries);
+          }
+
+    const SearchByRegion = async(region) => {
+      const response = await fetch(Api_url);
+            const data = await response.json();
+      var newCountries =[];
+      newCountries = data.filter(o => o.region === region);      
+      // const newCountries = [];
+      // newCountries[0] = Countries.find(o => o.name === title); `${Api_url}&s=${title}`
+            setCountries(newCountries);
+          }
+
   useEffect(() => {
     fetchCountries();
   }, []);
 
+
+  function sortDesc () { 
+    const temp = Countries.slice();
+    temp.reverse();
+    setCountries(temp);
+    if (Asc){
+      setIcon(FaSortAlphaDownAlt);
+    }
+    else{
+      setIcon(FaSortAlphaDown);
+    }
+    setAsc(!Asc);
+  }
+
+
   return (
     <>
-    <div><input className = "search"
-    value ="Lithuania"
+    <form><input className = "search"
+    value ={SearchTerm}
     type="text"
     placeholder="Search for Country"
-    onChange={() => {}}   
-       />
-       </div>
+    onChange={(e) => setSearchTerm(e.target.value)}   
+    /> <BiSearch onClick={() => SearchCountries(SearchTerm)} />
+       </form>
     <div>
-        <div className ="dropdown">
-            <button className ="dropbtn">Sort</button>
-            <div className ="dropdown-content">
-              <a href="#">Alphabeticaly (Descending)</a>
-              <a href="#">Alphabeticaly (Ascending)</a>
-            </div>
-          </div>
-        <button className = "dropbtn">Filter</button>
-        <button  className  = "tbd">TBD</button>
+       
+            <button className ="dropbtn" onClick={sortDesc} >Sort {Icon} </button>
+        <button className = "dropbtn">Filter </button>
+    
+            <div class="dropdown">
+  <button class="dropbtn">Region</button>
+  <div class="dropdown-content">
+    <a onClick={() => fetchCountries()}>All</a>
+    <a onClick={() => SearchByRegion('Asia')}>Asia</a>
+    <a onClick={() => SearchByRegion('Africa')}>Africa</a>
+    <a onClick={() => SearchByRegion('Antarctic Ocean')}>Antarctic Ocean</a>
+    <a onClick={() => SearchByRegion('Americas')}>Americas</a>
+    <a onClick={() => SearchByRegion('Europe')}>Europe</a>
+    <a onClick={() => SearchByRegion('Oceania')}>Oceania</a>
+    <a onClick={() => SearchByRegion('Polar')}>Polar</a>
+  </div>
+</div>
+
+
+
     </div> 
 
     {Countries?.length > 0 ? (
