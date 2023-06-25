@@ -4,6 +4,7 @@ import CountryCard from './CountryCard';
 import{FaSortAlphaDown} from "react-icons/fa";
 import{FaSortAlphaDownAlt} from "react-icons/fa";
 import{BiSearch} from  'react-icons/bi'
+import{AiFillCaretDown} from  'react-icons/ai'
 
 const Api_url = 'https://restcountries.com/v2/all?fields=name,region,area,flag';
 
@@ -30,8 +31,8 @@ function App() {
     const SearchCountries = async(name) => {
       const response = await fetch(Api_url);
             const data = await response.json();
-      const newCountries =[];
-      newCountries[0] = data.find(o => o.name === name);      
+      var newCountries =[];
+      newCountries = data.filter(o => o.name.includes(name));      
       // const newCountries = [];
       // newCountries[0] = Countries.find(o => o.name === title); `${Api_url}&s=${title}`
             setCountries(newCountries);
@@ -73,7 +74,7 @@ function App() {
     type="text"
     placeholder="Search for Country"
     onChange={(e) => setSearchTerm(e.target.value)}   
-    /> <BiSearch onClick={() => SearchCountries(SearchTerm)} />
+    /> <BiSearch  SearchTerm onClick={() => SearchTerm !==''?SearchCountries(SearchTerm):fetchCountries()} />
        </form>
     <div>
        
@@ -81,7 +82,7 @@ function App() {
         <button className = "dropbtn">Filter </button>
     
             <div class="dropdown">
-  <button class="dropbtn">Region</button>
+  <button class="dropbtn">Region <AiFillCaretDown className='icon'/></button>
   <div class="dropdown-content">
     <a onClick={() => fetchCountries()}>All</a>
     <a onClick={() => SearchByRegion('Asia')}>Asia</a>

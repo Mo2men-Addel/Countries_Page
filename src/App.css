@@ -182,3 +182,9 @@ body {
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
 }
 
+.icon { 
+  float : right;
+  margin-top: 2px;
+  margin-left: 4px;
+}
+
