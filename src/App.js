@@ -8,24 +8,19 @@ import{AiFillCaretDown} from  'react-icons/ai'
 
 const Api_url = 'https://restcountries.com/v2/all?fields=name,region,area,flag';
 
-// const Country1 = {
-//   "name": "Lithuania",
-//   "region": "Europe",
-//   "area": 65300,
-//   "independent": false
-// }
-
 function App() {
 
     const [Countries,setCountries] = useState([]);
     const [Asc , setAsc] = useState(true);
     const [Icon, setIcon] = useState(FaSortAlphaDown);
     const [SearchTerm, setSearchTerm] = useState('');
+    const [filtered, setFiltered] = useState(false);
 
     const fetchCountries = async ()  => {
       const response = await fetch(Api_url);
             const data = await response.json();
             setCountries(data);
+            setFiltered(false);
           }
 
     const SearchCountries = async(name) => {
@@ -33,8 +28,6 @@ function App() {
             const data = await response.json();
       var newCountries =[];
       newCountries = data.filter(o => o.name.includes(name));      
-      // const newCountries = [];
-      // newCountries[0] = Countries.find(o => o.name === title); `${Api_url}&s=${title}`
             setCountries(newCountries);
           }
 
@@ -42,10 +35,17 @@ function App() {
       const response = await fetch(Api_url);
             const data = await response.json();
       var newCountries =[];
-      newCountries = data.filter(o => o.region === region);      
-      // const newCountries = [];
-      // newCountries[0] = Countries.find(o => o.name === title); `${Api_url}&s=${title}`
+      newCountries = data.filter(o => o.region === region);         
             setCountries(newCountries);
+          }    
+
+    const filterLithuania = async() => {
+      const response = await fetch(Api_url);
+            const data = await response.json();
+      var newCountries =[];
+      newCountries = data.filter(o => o.area < 65300);         
+            setCountries(newCountries);
+              setFiltered(true);
           }
 
   useEffect(() => {
@@ -69,17 +69,18 @@ function App() {
 
   return (
     <>
-    <form><input className = "search"
+    <div>
+    <input className = "search"
     value ={SearchTerm}
     type="text"
     placeholder="Search for Country"
     onChange={(e) => setSearchTerm(e.target.value)}   
-    /> <BiSearch  SearchTerm onClick={() => SearchTerm !==''?SearchCountries(SearchTerm):fetchCountries()} />
-       </form>
+    /> <button className='dropbtn' SearchTerm onClick={() => SearchTerm !==''?SearchCountries(SearchTerm):fetchCountries()}>Search</button>
+       </div>
     <div>
        
             <button className ="dropbtn" onClick={sortDesc} >Sort {Icon} </button>
-        <button className = "dropbtn">Filter </button>
+        <button className = "dropbtn" onClick={() => !filtered?filterLithuania():fetchCountries()}>Smaller than Lithuania </button>
     
             <div class="dropdown">
   <button class="dropbtn">Region <AiFillCaretDown className='icon'/></button>
@@ -112,10 +113,6 @@ function App() {
           <h2>No countries found</h2>
         </div>
       )}
-
-    {/* // <div className = "wrapper">
-    //   <CountryCard Country1={Countries[0]}/>
-    // </div> */}
     </>
   );
 }
